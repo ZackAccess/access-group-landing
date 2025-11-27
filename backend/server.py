@@ -55,16 +55,19 @@ class ContactSubmissionCreate(BaseModel):
 
 # Email sending function
 def send_contact_email(contact_data: dict):
-    """Send contact form submission via email using SendGrid"""
+    """Send contact form submission via email using Resend"""
     try:
-        # Get SendGrid API key and recipient email from environment variables
-        sendgrid_api_key = os.environ.get('SENDGRID_API_KEY')
-        from_email = os.environ.get('FROM_EMAIL', 'noreply@grpaccess.com')
+        # Get Resend API key and recipient email from environment variables
+        resend_api_key = os.environ.get('RESEND_API_KEY')
+        from_email = os.environ.get('FROM_EMAIL', 'onboarding@resend.dev')
         recipient_email = os.environ.get('RECIPIENT_EMAIL', 'zack@grpaccess.com')
         
-        if not sendgrid_api_key:
-            logger.warning("SendGrid API key not configured. Email not sent.")
+        if not resend_api_key:
+            logger.warning("Resend API key not configured. Email not sent.")
             return False
+        
+        # Set API key
+        resend.api_key = resend_api_key
         
         # HTML email body
         html_content = f"""
@@ -96,19 +99,17 @@ def send_contact_email(contact_data: dict):
 </html>
 """
         
-        # Create SendGrid message
-        message = Mail(
-            from_email=from_email,
-            to_emails=recipient_email,
-            subject=f"New Contact Form Submission from {contact_data['name']}",
-            html_content=html_content
-        )
+        # Send email via Resend
+        params = {
+            "from": from_email,
+            "to": [recipient_email],
+            "subject": f"New Contact Form Submission from {contact_data['name']}",
+            "html": html_content,
+        }
         
-        # Send email via SendGrid
-        sg = SendGridAPIClient(sendgrid_api_key)
-        response = sg.send(message)
+        email = resend.Emails.send(params)
         
-        logger.info(f"Contact form email sent successfully to {recipient_email}. Status: {response.status_code}")
+        logger.info(f"Contact form email sent successfully to {recipient_email}. ID: {email.get('id')}")
         return True
         
     except Exception as e:
