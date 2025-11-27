@@ -291,9 +291,8 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <Building2 className="w-6 h-6 text-orange-600" />
-                <h4 className="text-xl font-bold">Access Group</h4>
+              <div className="mb-4">
+                <img src="/access-group-logo.png" alt="Access Group" className="h-16 w-auto brightness-0 invert" />
               </div>
               <p className="text-gray-400">
                 Excellence in signage and awning solutions across North America.
@@ -318,13 +317,17 @@ const HomePage = () => {
             
             <div>
               <h4 className="text-lg font-bold mb-4">Contact Info</h4>
-              <div className="space-y-2 text-gray-400">
+              <div className="space-y-3 text-gray-400">
+                <div className="flex items-start space-x-2">
+                  <MapPin className="w-4 h-4 mt-1 flex-shrink-0" />
+                  <span>2351 Boul. Fernand-Lafontaine,<br />Longueuil, QC, J4N 1N7</span>
+                </div>
                 <div className="flex items-center space-x-2">
-                  <Mail className="w-4 h-4" />
+                  <Mail className="w-4 h-4 flex-shrink-0" />
                   <span>zack@grpaccess.com</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Phone className="w-4 h-4" />
+                  <Phone className="w-4 h-4 flex-shrink-0" />
                   <span>450-674-3333</span>
                 </div>
               </div>
