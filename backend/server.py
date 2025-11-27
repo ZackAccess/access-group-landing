@@ -55,6 +55,91 @@ class ContactSubmissionCreate(BaseModel):
     phone: Optional[str] = None
     message: str
 
+# Email sending function
+async def send_contact_email(contact_data: dict):
+    """Send contact form submission via email using Outlook SMTP"""
+    try:
+        # Get SMTP credentials from environment variables
+        smtp_username = os.environ.get('SMTP_USERNAME')
+        smtp_password = os.environ.get('SMTP_PASSWORD')
+        recipient_email = os.environ.get('RECIPIENT_EMAIL', 'zack@grpaccess.com')
+        
+        if not smtp_username or not smtp_password:
+            logger.warning("SMTP credentials not configured. Email not sent.")
+            return False
+        
+        # Create email message
+        message = MIMEMultipart('alternative')
+        message['Subject'] = f"New Contact Form Submission from {contact_data['name']}"
+        message['From'] = smtp_username
+        message['To'] = recipient_email
+        
+        # Email body
+        text_body = f"""
+New Contact Form Submission
+
+Name: {contact_data['name']}
+Email: {contact_data['email']}
+Phone: {contact_data.get('phone', 'Not provided')}
+
+Message:
+{contact_data['message']}
+
+Submitted at: {contact_data['submitted_at']}
+"""
+        
+        html_body = f"""
+<html>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <h2 style="color: #ff5722;">New Contact Form Submission</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr>
+        <td style="padding: 10px; background-color: #f5f5f5; font-weight: bold; width: 120px;">Name:</td>
+        <td style="padding: 10px;">{contact_data['name']}</td>
+      </tr>
+      <tr>
+        <td style="padding: 10px; background-color: #f5f5f5; font-weight: bold;">Email:</td>
+        <td style="padding: 10px;"><a href="mailto:{contact_data['email']}">{contact_data['email']}</a></td>
+      </tr>
+      <tr>
+        <td style="padding: 10px; background-color: #f5f5f5; font-weight: bold;">Phone:</td>
+        <td style="padding: 10px;">{contact_data.get('phone', 'Not provided')}</td>
+      </tr>
+      <tr>
+        <td style="padding: 10px; background-color: #f5f5f5; font-weight: bold; vertical-align: top;">Message:</td>
+        <td style="padding: 10px;">{contact_data['message']}</td>
+      </tr>
+    </table>
+    <p style="margin-top: 20px; color: #666; font-size: 12px;">
+      Submitted at: {contact_data['submitted_at']}
+    </p>
+  </body>
+</html>
+"""
+        
+        # Attach both plain text and HTML versions
+        part1 = MIMEText(text_body, 'plain')
+        part2 = MIMEText(html_body, 'html')
+        message.attach(part1)
+        message.attach(part2)
+        
+        # Send email via Outlook SMTP
+        await aiosmtplib.send(
+            message,
+            hostname='smtp-mail.outlook.com',
+            port=587,
+            start_tls=True,
+            username=smtp_username,
+            password=smtp_password,
+        )
+        
+        logger.info(f"Contact form email sent successfully to {recipient_email}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Failed to send contact email: {str(e)}")
+        return False
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
