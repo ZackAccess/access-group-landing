@@ -55,39 +55,20 @@ class ContactSubmissionCreate(BaseModel):
     message: str
 
 # Email sending function
-async def send_contact_email(contact_data: dict):
-    """Send contact form submission via email using Outlook SMTP"""
+def send_contact_email(contact_data: dict):
+    """Send contact form submission via email using SendGrid"""
     try:
-        # Get SMTP credentials from environment variables
-        smtp_username = os.environ.get('SMTP_USERNAME')
-        smtp_password = os.environ.get('SMTP_PASSWORD')
+        # Get SendGrid API key and recipient email from environment variables
+        sendgrid_api_key = os.environ.get('SENDGRID_API_KEY')
+        from_email = os.environ.get('FROM_EMAIL', 'noreply@grpaccess.com')
         recipient_email = os.environ.get('RECIPIENT_EMAIL', 'zack@grpaccess.com')
         
-        if not smtp_username or not smtp_password:
-            logger.warning("SMTP credentials not configured. Email not sent.")
+        if not sendgrid_api_key:
+            logger.warning("SendGrid API key not configured. Email not sent.")
             return False
         
-        # Create email message
-        message = MIMEMultipart('alternative')
-        message['Subject'] = f"New Contact Form Submission from {contact_data['name']}"
-        message['From'] = smtp_username
-        message['To'] = recipient_email
-        
-        # Email body
-        text_body = f"""
-New Contact Form Submission
-
-Name: {contact_data['name']}
-Email: {contact_data['email']}
-Phone: {contact_data.get('phone', 'Not provided')}
-
-Message:
-{contact_data['message']}
-
-Submitted at: {contact_data['submitted_at']}
-"""
-        
-        html_body = f"""
+        # HTML email body
+        html_content = f"""
 <html>
   <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
     <h2 style="color: #ff5722;">New Contact Form Submission</h2>
@@ -116,23 +97,19 @@ Submitted at: {contact_data['submitted_at']}
 </html>
 """
         
-        # Attach both plain text and HTML versions
-        part1 = MIMEText(text_body, 'plain')
-        part2 = MIMEText(html_body, 'html')
-        message.attach(part1)
-        message.attach(part2)
-        
-        # Send email via Outlook SMTP
-        await aiosmtplib.send(
-            message,
-            hostname='smtp-mail.outlook.com',
-            port=587,
-            start_tls=True,
-            username=smtp_username,
-            password=smtp_password,
+        # Create SendGrid message
+        message = Mail(
+            from_email=from_email,
+            to_emails=recipient_email,
+            subject=f"New Contact Form Submission from {contact_data['name']}",
+            html_content=html_content
         )
         
-        logger.info(f"Contact form email sent successfully to {recipient_email}")
+        # Send email via SendGrid
+        sg = SendGridAPIClient(sendgrid_api_key)
+        response = sg.send(message)
+        
+        logger.info(f"Contact form email sent successfully to {recipient_email}. Status: {response.status_code}")
         return True
         
     except Exception as e:
