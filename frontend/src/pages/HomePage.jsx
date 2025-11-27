@@ -32,12 +32,18 @@ const HomePage = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Mock submission - will be replaced with actual API call
-    setTimeout(() => {
-      toast.success('Thank you! We\'ll get back to you soon.');
-      setFormData({ name: '', email: '', phone: '', message: '' });
+    try {
+      const response = await axios.post(`${API}/contact`, formData);
+      if (response.data) {
+        toast.success('Thank you! We\'ll get back to you soon.');
+        setFormData({ name: '', email: '', phone: '', message: '' });
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Failed to send message. Please try again or contact us directly.');
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   const divisions = [
