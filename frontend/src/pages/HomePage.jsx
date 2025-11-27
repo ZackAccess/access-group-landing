@@ -61,8 +61,7 @@ const HomePage = () => {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <Building2 className="w-8 h-8 text-orange-600" />
-            <h1 className="text-2xl font-bold text-gray-900">Access Group</h1>
+            <img src="/access-group-logo.png" alt="Access Group" className="h-12 w-auto" />
           </div>
           <nav className="hidden md:flex space-x-8">
             <a href="#divisions" className="text-gray-700 hover:text-orange-600 transition-colors font-medium">Divisions</a>
