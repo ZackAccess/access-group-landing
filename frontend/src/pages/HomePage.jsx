@@ -43,7 +43,7 @@ const HomePage = () => {
       url: 'https://accessigns.com',
       features: ['Custom Signage', 'Expert Installation', 'North America Service'],
       logo: '/access-signs-logo.png',
-      hasLogo: false
+      hasLogo: true
     },
     {
       name: 'Suntek Awnings',
