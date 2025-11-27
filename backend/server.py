@@ -158,7 +158,7 @@ async def create_contact_submission(input: ContactSubmissionCreate):
         logger.info(f"Contact submission saved: {contact_obj.id}")
         
         # Send email notification
-        email_sent = await send_contact_email(contact_obj.dict())
+        email_sent = send_contact_email(contact_obj.dict())
         if not email_sent:
             logger.warning(f"Email notification failed for submission {contact_obj.id}")
         
