@@ -292,7 +292,7 @@ const HomePage = () => {
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="mb-4">
-                <img src="/access-group-logo.png" alt="Access Group" className="h-16 w-auto brightness-0 invert" />
+                <img src="/access-group-logo-white.png" alt="Access Group" className="h-10 w-auto" />
               </div>
               <p className="text-gray-400">
                 Excellence in signage and awning solutions across North America.
