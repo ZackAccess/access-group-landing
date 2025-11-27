@@ -121,9 +121,17 @@ const HomePage = () => {
               >
                 <CardContent className="p-8">
                   <div className="bg-gray-100 rounded-lg p-6 mb-6 flex items-center justify-center h-32 group-hover:bg-orange-50 transition-colors duration-300">
-                    <span className="text-2xl font-bold text-gray-400 group-hover:text-orange-600 transition-colors duration-300">
-                      {division.name} Logo
-                    </span>
+                    {division.hasLogo ? (
+                      <img 
+                        src={division.logo} 
+                        alt={`${division.name} Logo`}
+                        className="max-h-24 max-w-full object-contain"
+                      />
+                    ) : (
+                      <span className="text-2xl font-bold text-gray-400 group-hover:text-orange-600 transition-colors duration-300">
+                        {division.name} Logo
+                      </span>
+                    )}
                   </div>
                   
                   <h4 className="text-2xl font-bold text-gray-900 mb-4">{division.name}</h4>
