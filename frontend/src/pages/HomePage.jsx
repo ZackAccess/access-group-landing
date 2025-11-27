@@ -42,14 +42,16 @@ const HomePage = () => {
       description: 'Leading custom commercial signage company offering tailored in-house signage solutions for businesses nationwide.',
       url: 'https://accessigns.com',
       features: ['Custom Signage', 'Expert Installation', 'North America Service'],
-      logo: '/access-signs-logo.png'
+      logo: '/access-signs-logo.png',
+      hasLogo: false
     },
     {
       name: 'Suntek Awnings',
       description: 'Premium awning solutions providing shade, protection, and enhanced aesthetics for commercial and residential properties.',
       url: 'https://suntekawnings.com',
       features: ['Custom Awnings', 'Quality Materials', 'Professional Service'],
-      logo: '/suntek-awnings-logo.png'
+      logo: '/suntek-awnings-logo.png',
+      hasLogo: true
     }
   ];
 
