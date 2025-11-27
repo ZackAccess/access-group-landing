@@ -169,6 +169,35 @@ async def get_status_checks():
     
     return status_checks
 
+@api_router.post("/contact", response_model=ContactSubmission)
+async def create_contact_submission(input: ContactSubmissionCreate):
+    """Handle contact form submission - save to database and send email"""
+    try:
+        # Create contact submission object
+        contact_dict = input.dict()
+        contact_obj = ContactSubmission(**contact_dict)
+        
+        # Save to database
+        await db.contact_submissions.insert_one(contact_obj.dict())
+        logger.info(f"Contact submission saved: {contact_obj.id}")
+        
+        # Send email notification
+        email_sent = await send_contact_email(contact_obj.dict())
+        if not email_sent:
+            logger.warning(f"Email notification failed for submission {contact_obj.id}")
+        
+        return contact_obj
+        
+    except Exception as e:
+        logger.error(f"Error processing contact submission: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to process contact submission")
+
+@api_router.get("/contact", response_model=List[ContactSubmission])
+async def get_contact_submissions():
+    """Retrieve all contact form submissions"""
+    submissions = await db.contact_submissions.find().to_list(1000)
+    return [ContactSubmission(**submission) for submission in submissions]
+
 # Include the router in the main app
 app.include_router(api_router)
 
